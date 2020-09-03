@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+archive/
+
+# IDEs
+.idea/
+
+# Hugo
+resources/
+# public/
+.Rproj.user

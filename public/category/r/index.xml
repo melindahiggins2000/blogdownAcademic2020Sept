@@ -1,0 +1,716 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>R | Melinda Higgins, PhD</title>
+    <link>/category/r/</link>
+      <atom:link href="/category/r/index.xml" rel="self" type="application/rss+xml" />
+    <description>R</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2020 Melinda Higgins, PhD</copyright><lastBuildDate>Tue, 01 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
+      <title>R</title>
+      <link>/category/r/</link>
+    </image>
+    
+    <item>
+      <title>Create Rmarkdown Document with SAS Code and Output - SAS engine</title>
+      <link>/post/create-rmarkdown-document-with-sas-code-and-output-sas-engine/</link>
+      <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>/post/create-rmarkdown-document-with-sas-code-and-output-sas-engine/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;getting-started---sas-engine-for-rmarkdown&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Getting started - SAS Engine for Rmarkdown&lt;/h2&gt;
+&lt;p&gt;To get started using SAS as your statistical software/data processing “engine” take a look at the following article: &lt;a href=&#34;http://www.ssc.wisc.edu/~hemken/SASworkshops/Markdown/SASmarkdown.html&#34;&gt;http://www.ssc.wisc.edu/~hemken/SASworkshops/Markdown/SASmarkdown.html&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Also read up on the &lt;code&gt;SASmarkdown&lt;/code&gt; package &lt;a href=&#34;https://cran.r-project.org/web/packages/SASmarkdown/&#34;&gt;https://cran.r-project.org/web/packages/SASmarkdown/&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;display-the-current-knitr-engine&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Display the current &lt;code&gt;knitr&lt;/code&gt; engine&lt;/h2&gt;
+&lt;p&gt;The following Rmarkdown chunk shows the commands to see what are your current &lt;code&gt;knitr&lt;/code&gt; engine settings.&lt;/p&gt;
+&lt;p&gt;Be sure to put &lt;code&gt;{r}&lt;/code&gt; after the 3 backticks ``` to create the R chunk.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;```{r}&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# see what the initial knitr engine settings are
+knitr::opts_chunk$get()$engine
+knitr::opts_chunk$get()$engine.path
+knitr::opts_chunk$get()$engine.opts&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;```&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;R&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## NULL&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## NULL&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;setup-the-sas-engine&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Setup the SAS engine&lt;/h2&gt;
+&lt;p&gt;To get started you need:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Have SAS installed locally on your machine (i.e. you need a licensed copy)&lt;/li&gt;
+&lt;li&gt;You need to know where on your local drive that your SAS executable is located. Mine is located at &lt;code&gt;C:\Program Files\SASHome\SASFoundation\9.4\sas.exe&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Install the &lt;code&gt;SASmarkdown&lt;/code&gt; package &lt;a href=&#34;https://cran.r-project.org/web/packages/SASmarkdown/index.html&#34;&gt;https://cran.r-project.org/web/packages/SASmarkdown/index.html&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Then setup your &lt;code&gt;knitr&lt;/code&gt; options as follows (type these commands into an R chunk - see next section below):&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;saspath &amp;lt;- &amp;quot;C:/Program Files/SASHome/SASFoundation/9.4/sas.exe&amp;quot;
+sasopts &amp;lt;- &amp;quot;-nosplash -linesize 75&amp;quot;
+knitr::opts_chunk$set(engine=&amp;quot;sashtml&amp;quot;, engine.path=saspath, 
+        engine.opts=sasopts, comment=NA)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;change-settings-to-use-html-output-from-sas&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Change settings to use HTML output from SAS&lt;/h2&gt;
+&lt;p&gt;NOTE: You will need to install the &lt;code&gt;SASmarkdown&lt;/code&gt; package first. For this exercise we’re using &lt;code&gt;engine=&#34;sashtml&#34;&lt;/code&gt; which works well when knitting to HTML. However, this format will not work if you knit to PDF or DOC. This leverages the ODS output from SAS.&lt;/p&gt;
+&lt;p&gt;The R chunk below loads the &lt;code&gt;SASmarkdown&lt;/code&gt; package, changes the &lt;code&gt;knitr&lt;/code&gt; engine to &lt;code&gt;&#34;sashtml&#34;&lt;/code&gt; and runs the &lt;code&gt;knitr::opts_chunk$get()&lt;/code&gt; commands again to make sure that the engine has been switched from &lt;code&gt;&#34;R&#34;&lt;/code&gt; to &lt;code&gt;&#34;sashtml&#34;&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;```{r}&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# load the SASmarkdown package
+library(SASmarkdown)
+
+# set up the options so that knit knows where you SAS executable is
+# set the linesize to be easily readable on letter size paper, portrait
+# and set the knir options using opts_chunk$set().
+saspath &amp;lt;- &amp;quot;C:/Program Files/SASHome/SASFoundation/9.4/sas.exe&amp;quot;
+sasopts &amp;lt;- &amp;quot;-nosplash -linesize 75&amp;quot;
+knitr::opts_chunk$set(engine=&amp;quot;sashtml&amp;quot;, engine.path=saspath, 
+        engine.opts=sasopts, comment=NA)
+
+# run these commands to convince yourself that
+# within this knitr session the engine changed.
+knitr::opts_chunk$get()$engine
+knitr::opts_chunk$get()$engine.path
+knitr::opts_chunk$get()$engine.opts&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;```&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;sashtml&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;C:/Program Files/SASHome/SASFoundation/9.4/sas.exe&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;-nosplash -linesize 75&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;if-you-want-to-use-sas-but-make-pdf-or-doc-files&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;If you want to use SAS but make PDF or DOC files&lt;/h2&gt;
+&lt;p&gt;If you want to knit to PDF or DOC, you should change the engine to &lt;code&gt;engine=&#34;sas&#34;&lt;/code&gt;. This will NOT use ODS output from SAS.&lt;/p&gt;
+&lt;p&gt;These R chunk commands are provided for reference but not executed here.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;saspath &amp;lt;- &amp;quot;C:/Program Files/SASHome/SASFoundation/9.4/sas.exe&amp;quot;
+sasopts &amp;lt;- &amp;quot;-nosplash -linesize 75&amp;quot;
+knitr::opts_chunk$set(engine=&amp;quot;sas&amp;quot;, engine.path=saspath, 
+        engine.opts=sasopts, comment=NA)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;try-some-sas-code&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Try some &lt;code&gt;SAS&lt;/code&gt; code&lt;/h2&gt;
+&lt;p&gt;This code chunk below runs the &lt;code&gt;PROC MEANS&lt;/code&gt; command from SAS using the built in dataset &lt;code&gt;sashelp.class&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;```{r}&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;proc means data=sashelp.class;
+run;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;```&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;branch&#34;&gt;
+&lt;a name=&#34;IDX&#34;&gt;&lt;/a&gt;
+&lt;div&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;!--BEGINTABLE--&gt;
+&lt;table class=&#34;table&#34; cellspacing=&#34;0&#34; cellpadding=&#34;7&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34; summary=&#34;Procedure Means: Summary statistics&#34;&gt;
+&lt;colgroup&gt;
+&lt;col&gt;
+&lt;/colgroup&gt;
+&lt;colgroup&gt;
+&lt;col&gt;
+&lt;col&gt;
+&lt;col&gt;
+&lt;col&gt;
+&lt;col&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th class=&#34;l b header&#34; scope=&#34;col&#34;&gt;
+Variable
+&lt;/th&gt;
+&lt;th class=&#34;r b header&#34; scope=&#34;col&#34;&gt;
+N
+&lt;/th&gt;
+&lt;th class=&#34;r b header&#34; scope=&#34;col&#34;&gt;
+Mean
+&lt;/th&gt;
+&lt;th class=&#34;r b header&#34; scope=&#34;col&#34;&gt;
+Std Dev
+&lt;/th&gt;
+&lt;th class=&#34;r b header&#34; scope=&#34;col&#34;&gt;
+Minimum
+&lt;/th&gt;
+&lt;th class=&#34;r b header&#34; scope=&#34;col&#34;&gt;
+Maximum
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;th class=&#34;l stacked_cell data&#34;&gt;
+&lt;table width=&#34;100%&#34; border=&#34;0&#34; cellpadding=&#34;7&#34; cellspacing=&#34;0&#34;&gt;
+&lt;tr&gt;
+&lt;th class=&#34;l data top_stacked_value&#34;&gt;
+Age
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th class=&#34;l data middle_stacked_value&#34;&gt;
+Height
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th class=&#34;l data bottom_stacked_value&#34;&gt;
+Weight
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/th&gt;
+&lt;td class=&#34;r stacked_cell data&#34;&gt;
+&lt;table width=&#34;100%&#34; border=&#34;0&#34; cellpadding=&#34;7&#34; cellspacing=&#34;0&#34;&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data top_stacked_value&#34;&gt;
+19
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data middle_stacked_value&#34;&gt;
+19
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data bottom_stacked_value&#34;&gt;
+19
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;td class=&#34;r stacked_cell data&#34;&gt;
+&lt;table width=&#34;100%&#34; border=&#34;0&#34; cellpadding=&#34;7&#34; cellspacing=&#34;0&#34;&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data top_stacked_value&#34;&gt;
+13.3157895
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data middle_stacked_value&#34;&gt;
+62.3368421
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data bottom_stacked_value&#34;&gt;
+100.0263158
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;td class=&#34;r stacked_cell data&#34;&gt;
+&lt;table width=&#34;100%&#34; border=&#34;0&#34; cellpadding=&#34;7&#34; cellspacing=&#34;0&#34;&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data top_stacked_value&#34;&gt;
+1.4926722
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data middle_stacked_value&#34;&gt;
+5.1270752
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data bottom_stacked_value&#34;&gt;
+22.7739335
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;td class=&#34;r stacked_cell data&#34;&gt;
+&lt;table width=&#34;100%&#34; border=&#34;0&#34; cellpadding=&#34;7&#34; cellspacing=&#34;0&#34;&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data top_stacked_value&#34;&gt;
+11.0000000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data middle_stacked_value&#34;&gt;
+51.3000000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data bottom_stacked_value&#34;&gt;
+50.5000000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;td class=&#34;r stacked_cell data&#34;&gt;
+&lt;table width=&#34;100%&#34; border=&#34;0&#34; cellpadding=&#34;7&#34; cellspacing=&#34;0&#34;&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data top_stacked_value&#34;&gt;
+16.0000000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data middle_stacked_value&#34;&gt;
+72.0000000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data bottom_stacked_value&#34;&gt;
+150.0000000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;!--ENDTABLE--&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;br&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;more-sas-code&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;More SAS code&lt;/h2&gt;
+&lt;p&gt;Here is another example of SAS code chunk using the &lt;code&gt;PROC CORR&lt;/code&gt; commands to see correlations between the variables in the &lt;code&gt;sashelp.class&lt;/code&gt; dataset and visualize the scatterplot matrix.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;```{r}&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;proc corr data=sashelp.class plots=matrix;
+run;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;```&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;branch&#34;&gt;
+&lt;a name=&#34;IDX&#34;&gt;&lt;/a&gt;
+&lt;div&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;!--BEGINTABLE--&gt;
+&lt;table class=&#34;table&#34; cellspacing=&#34;0&#34; cellpadding=&#34;7&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34; summary=&#34;Procedure Corr: Variables Information&#34;&gt;
+&lt;colgroup&gt;
+&lt;col&gt;
+&lt;/colgroup&gt;
+&lt;colgroup&gt;
+&lt;col&gt;
+&lt;/colgroup&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;th class=&#34;l rowheader&#34; scope=&#34;row&#34;&gt;
+3 Variables:
+&lt;/th&gt;
+&lt;td class=&#34;l data&#34;&gt;
+Age Height Weight
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;!--ENDTABLE--&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;br&gt;
+&lt;a name=&#34;IDX1&#34;&gt;&lt;/a&gt;
+&lt;div&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;!--BEGINTABLE--&gt;
+&lt;table class=&#34;table&#34; cellspacing=&#34;0&#34; cellpadding=&#34;7&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34; summary=&#34;Procedure Corr: Simple Statistics&#34;&gt;
+&lt;colgroup&gt;
+&lt;col&gt;
+&lt;/colgroup&gt;
+&lt;colgroup&gt;
+&lt;col&gt;
+&lt;col&gt;
+&lt;col&gt;
+&lt;col&gt;
+&lt;col&gt;
+&lt;col&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th class=&#34;c b header&#34; colspan=&#34;7&#34; scope=&#34;colgroup&#34;&gt;
+Simple Statistics
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th class=&#34;l b header&#34; scope=&#34;col&#34;&gt;
+Variable
+&lt;/th&gt;
+&lt;th class=&#34;r b header&#34; scope=&#34;col&#34;&gt;
+N
+&lt;/th&gt;
+&lt;th class=&#34;r b header&#34; scope=&#34;col&#34;&gt;
+Mean
+&lt;/th&gt;
+&lt;th class=&#34;r b header&#34; scope=&#34;col&#34;&gt;
+Std Dev
+&lt;/th&gt;
+&lt;th class=&#34;r b header&#34; scope=&#34;col&#34;&gt;
+Sum
+&lt;/th&gt;
+&lt;th class=&#34;r b header&#34; scope=&#34;col&#34;&gt;
+Minimum
+&lt;/th&gt;
+&lt;th class=&#34;r b header&#34; scope=&#34;col&#34;&gt;
+Maximum
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;th class=&#34;l rowheader&#34; scope=&#34;row&#34;&gt;
+Age
+&lt;/th&gt;
+&lt;td class=&#34;r data&#34;&gt;
+19
+&lt;/td&gt;
+&lt;td class=&#34;r data&#34;&gt;
+13.31579
+&lt;/td&gt;
+&lt;td class=&#34;r data&#34;&gt;
+1.49267
+&lt;/td&gt;
+&lt;td class=&#34;r data&#34;&gt;
+253.00000
+&lt;/td&gt;
+&lt;td class=&#34;r data&#34;&gt;
+11.00000
+&lt;/td&gt;
+&lt;td class=&#34;r data&#34;&gt;
+16.00000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th class=&#34;l rowheader&#34; scope=&#34;row&#34;&gt;
+Height
+&lt;/th&gt;
+&lt;td class=&#34;r data&#34;&gt;
+19
+&lt;/td&gt;
+&lt;td class=&#34;r data&#34;&gt;
+62.33684
+&lt;/td&gt;
+&lt;td class=&#34;r data&#34;&gt;
+5.12708
+&lt;/td&gt;
+&lt;td class=&#34;r data&#34;&gt;
+1184
+&lt;/td&gt;
+&lt;td class=&#34;r data&#34;&gt;
+51.30000
+&lt;/td&gt;
+&lt;td class=&#34;r data&#34;&gt;
+72.00000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th class=&#34;l rowheader&#34; scope=&#34;row&#34;&gt;
+Weight
+&lt;/th&gt;
+&lt;td class=&#34;r data&#34;&gt;
+19
+&lt;/td&gt;
+&lt;td class=&#34;r data&#34;&gt;
+100.02632
+&lt;/td&gt;
+&lt;td class=&#34;r data&#34;&gt;
+22.77393
+&lt;/td&gt;
+&lt;td class=&#34;r data&#34;&gt;
+1901
+&lt;/td&gt;
+&lt;td class=&#34;r data&#34;&gt;
+50.50000
+&lt;/td&gt;
+&lt;td class=&#34;r data&#34;&gt;
+150.00000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;!--ENDTABLE--&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;br&gt;
+&lt;a name=&#34;IDX2&#34;&gt;&lt;/a&gt;
+&lt;div&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;!--BEGINTABLE--&gt;
+&lt;table class=&#34;table&#34; cellspacing=&#34;0&#34; cellpadding=&#34;7&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34; summary=&#34;Procedure Corr: Pearson Correlations&#34;&gt;
+&lt;colgroup&gt;
+&lt;col&gt;
+&lt;/colgroup&gt;
+&lt;colgroup&gt;
+&lt;col&gt;
+&lt;col&gt;
+&lt;col&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th class=&#34;c b header&#34; colspan=&#34;4&#34; scope=&#34;colgroup&#34;&gt;
+Pearson Correlation Coefficients, N = 19 &lt;br/&gt;Prob &amp;gt; |r| under H0: Rho=0
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th class=&#34;c headerempty&#34; scope=&#34;col&#34;&gt;
+&lt;/th&gt;
+&lt;th class=&#34;r b header&#34; scope=&#34;col&#34;&gt;
+Age
+&lt;/th&gt;
+&lt;th class=&#34;r b header&#34; scope=&#34;col&#34;&gt;
+Height
+&lt;/th&gt;
+&lt;th class=&#34;r b header&#34; scope=&#34;col&#34;&gt;
+Weight
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;th class=&#34;l rowheader&#34; scope=&#34;row&#34;&gt;
+Age
+&lt;/th&gt;
+&lt;td class=&#34;r stacked_cell data&#34;&gt;
+&lt;table width=&#34;100%&#34; border=&#34;0&#34; cellpadding=&#34;7&#34; cellspacing=&#34;0&#34;&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data top_stacked_value&#34;&gt;
+1.00000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data bottom_stacked_value&#34;&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;td class=&#34;r stacked_cell data&#34;&gt;
+&lt;table width=&#34;100%&#34; border=&#34;0&#34; cellpadding=&#34;7&#34; cellspacing=&#34;0&#34;&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data top_stacked_value&#34;&gt;
+0.81143
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data bottom_stacked_value&#34;&gt;
+&amp;lt;.0001
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;td class=&#34;r stacked_cell data&#34;&gt;
+&lt;table width=&#34;100%&#34; border=&#34;0&#34; cellpadding=&#34;7&#34; cellspacing=&#34;0&#34;&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data top_stacked_value&#34;&gt;
+0.74089
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data bottom_stacked_value&#34;&gt;
+0.0003
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th class=&#34;l rowheader&#34; scope=&#34;row&#34;&gt;
+Height
+&lt;/th&gt;
+&lt;td class=&#34;r stacked_cell data&#34;&gt;
+&lt;table width=&#34;100%&#34; border=&#34;0&#34; cellpadding=&#34;7&#34; cellspacing=&#34;0&#34;&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data top_stacked_value&#34;&gt;
+0.81143
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data bottom_stacked_value&#34;&gt;
+&amp;lt;.0001
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;td class=&#34;r stacked_cell data&#34;&gt;
+&lt;table width=&#34;100%&#34; border=&#34;0&#34; cellpadding=&#34;7&#34; cellspacing=&#34;0&#34;&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data top_stacked_value&#34;&gt;
+1.00000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data bottom_stacked_value&#34;&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;td class=&#34;r stacked_cell data&#34;&gt;
+&lt;table width=&#34;100%&#34; border=&#34;0&#34; cellpadding=&#34;7&#34; cellspacing=&#34;0&#34;&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data top_stacked_value&#34;&gt;
+0.87779
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data bottom_stacked_value&#34;&gt;
+&amp;lt;.0001
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th class=&#34;l rowheader&#34; scope=&#34;row&#34;&gt;
+Weight
+&lt;/th&gt;
+&lt;td class=&#34;r stacked_cell data&#34;&gt;
+&lt;table width=&#34;100%&#34; border=&#34;0&#34; cellpadding=&#34;7&#34; cellspacing=&#34;0&#34;&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data top_stacked_value&#34;&gt;
+0.74089
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data bottom_stacked_value&#34;&gt;
+0.0003
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;td class=&#34;r stacked_cell data&#34;&gt;
+&lt;table width=&#34;100%&#34; border=&#34;0&#34; cellpadding=&#34;7&#34; cellspacing=&#34;0&#34;&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data top_stacked_value&#34;&gt;
+0.87779
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data bottom_stacked_value&#34;&gt;
+&amp;lt;.0001
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;td class=&#34;r stacked_cell data&#34;&gt;
+&lt;table width=&#34;100%&#34; border=&#34;0&#34; cellpadding=&#34;7&#34; cellspacing=&#34;0&#34;&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data top_stacked_value&#34;&gt;
+1.00000
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class=&#34;r data bottom_stacked_value&#34;&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;!--ENDTABLE--&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;br&gt;
+&lt;a name=&#34;IDX3&#34;&gt;&lt;/a&gt;
+&lt;div&gt;
+&lt;div class=&#34;c&#34;&gt;
+&lt;p&gt;&lt;img alt=&#34;Scatter Plot Matrix&#34; src=&#34;unnamed-chunk-5.png&#34; style=&#34; height: 640px; width: 640px;&#34; border=&#34;0&#34; class=&#34;c&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;br&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;reset-engine-to-r&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Reset engine to R&lt;/h2&gt;
+&lt;p&gt;While this is great using SAS, if you want to switch back to using R within the same Rmarkdown document, within the same &lt;code&gt;knitr&lt;/code&gt; session, you’ll need to tell &lt;code&gt;knitr&lt;/code&gt; that you are switching engines.&lt;/p&gt;
+&lt;p&gt;To get this next chunk to run, you’ll need to reset the &lt;code&gt;knitr&lt;/code&gt; engine within the chunk options directly and then use the command &lt;code&gt;knitr::opts_chunk$set(engine=&#34;R&#34;, engine.path=NULL, engine.opts=NULL, comment=NA)&lt;/code&gt; to reset back to R.&lt;/p&gt;
+&lt;p&gt;Be sure to put &lt;code&gt;{r, engine=&#39;R&#39;}&lt;/code&gt; after the 3 backticks ``` to set this R chunk back to the R engine.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;```{r, engine=&#39;R&#39;}&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# this chunk has the engine set back to `R`
+
+# run a short bit of r code
+# scatterplot of cars dataset
+plot(cars)
+
+# check the current engine
+knitr::opts_chunk$get()$engine
+
+# reset the engine globally (i.e. so it will work outside of
+# this chunk so you don&amp;#39;t have to keep typing engine=`R`)
+knitr::opts_chunk$set(engine=&amp;quot;R&amp;quot;,  engine.path=NULL, 
+        engine.opts=NULL, comment=NA)
+
+# confirm that this change was applied
+knitr::opts_chunk$get()$engine
+knitr::opts_chunk$get()$engine.path
+knitr::opts_chunk$get()$engine.opts&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;```&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2019-10-01-create-rmarkdown-document-with-sas-code-and-output-sas-engine/index_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[1] &amp;quot;sashtml&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;[1] &amp;quot;R&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;NULL&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;NULL&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;…and here is another R chunk with no engine defined but the engine was switched back to R in the previous chunk.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;```{r}&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# this chunk didn&amp;#39;t list the engine explicitly, so let&amp;#39;s
+# make sure the global change carried over into this chunk
+knitr::opts_chunk$get()$engine
+
+# and some more R code
+# simple linear regression of distance by speed
+# for cars dataset
+summary(lm(dist ~ speed, data = cars))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;```&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[1] &amp;quot;R&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;
+Call:
+lm(formula = dist ~ speed, data = cars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-29.069  -9.525  -2.272   9.215  43.201 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&amp;gt;|t|)    
+(Intercept) -17.5791     6.7584  -2.601   0.0123 *  
+speed         3.9324     0.4155   9.464 1.49e-12 ***
+---
+Signif. codes:  0 &amp;#39;***&amp;#39; 0.001 &amp;#39;**&amp;#39; 0.01 &amp;#39;*&amp;#39; 0.05 &amp;#39;.&amp;#39; 0.1 &amp;#39; &amp;#39; 1
+
+Residual standard error: 15.38 on 48 degrees of freedom
+Multiple R-squared:  0.6511,    Adjusted R-squared:  0.6438 
+F-statistic: 89.57 on 1 and 48 DF,  p-value: 1.49e-12&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Good luck creating documents with Rmarkdown for SAS code and output.&lt;/p&gt;
+&lt;div id=&#34;read-more-on-r-and-sas&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Read more on R and SAS&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.r-bloggers.com/&#34;&gt;R-Bloggers&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.proc-x.com/&#34;&gt;PROC-X SAS Bloggers&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>New R Course: R for SAS Users</title>
+      <link>/post/new-r-course-r-for-sas-users/</link>
+      <pubDate>Tue, 13 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>/post/new-r-course-r-for-sas-users/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;do-you-know-some-sas-want-to-learn-r&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Do you know some SAS? Want to Learn R?&lt;/h2&gt;
+&lt;p&gt;If you have some experience with SAS and want to learn R, this is the course for you. R is FREE (cost) and OPEN (license) and is one of the fastest growing software languages for statistics and data science. This course is a gentle introduction to the R language with every chapter providing a detailed mapping of R functions to SAS procedures highlighting similarities and differences. You will orient yourself in the R environment and discover how to wrangle, visualize, and model data plus customize your output for final presentation. Throughout the course, you will follow a consistent workflow of data quality checking and cleaning, exploring relationships, modeling, and presenting results. You will leave this course with coded examples that provide a template to use immediately with a dataset of your own.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;course-summary&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Course Summary&lt;/h2&gt;
+&lt;p&gt;The course takes only 4 hours or less to complete. It has 15 short (5 minutes or less) videos and 41 coding exercises. The 4 chapters cover:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Getting started with R&lt;/li&gt;
+&lt;li&gt;Data wrangling&lt;/li&gt;
+&lt;li&gt;Data exploration&lt;/li&gt;
+&lt;li&gt;Models and presentation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You will leave the course with coded examples and a workflow template to make you productive in R right away.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;take-the-course-today&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Take the Course Today!&lt;/h2&gt;
+&lt;p&gt;Create an account and take the &lt;a href=&#34;https://www.datacamp.com/courses/r-for-sas-users&#34;&gt;R for SAS Users&lt;/a&gt; course today! You can take the first chapter for FREE but will need a subscription to complete the full course.&lt;/p&gt;
+&lt;div id=&#34;read-more-on-r-and-sas&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Read more on R and SAS&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.r-bloggers.com/&#34;&gt;R-Bloggers&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.proc-x.com/&#34;&gt;PROC-X SAS Bloggers&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

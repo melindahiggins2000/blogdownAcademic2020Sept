@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects | Melinda Higgins, PhD</title>
+    <link>/project/</link>
+      <atom:link href="/project/index.xml" rel="self" type="application/rss+xml" />
+    <description>Projects</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2020 Melinda Higgins, PhD</copyright><lastBuildDate>Wed, 01 Jan 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_2.png</url>
+      <title>Projects</title>
+      <link>/project/</link>
+    </image>
+    
+    <item>
+      <title>R for SAS Users</title>
+      <link>/project/r4sas/</link>
+      <pubDate>Wed, 01 Jan 2020 00:00:00 +0000</pubDate>
+      <guid>/project/r4sas/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Reproducible Templates for Analysis and Dissemination</title>
+      <link>/project/reptemplates/</link>
+      <pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>/project/reptemplates/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Big Data Analytics for Healthcare</title>
+      <link>/project/n741/</link>
+      <pubDate>Sun, 01 Jan 2017 00:00:00 +0000</pubDate>
+      <guid>/project/n741/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Quantitative Analysis of Clinical Data</title>
+      <link>/project/n736/</link>
+      <pubDate>Fri, 01 Jan 2016 00:00:00 +0000</pubDate>
+      <guid>/project/n736/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
